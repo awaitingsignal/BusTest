@@ -2,6 +2,7 @@ package com.prokarma.bustest.di.module;
 
 import com.google.gson.Gson;
 import com.prokarma.bustest.Constants;
+import com.prokarma.bustest.repo.remote.NBAService;
 
 import javax.inject.Singleton;
 
@@ -15,17 +16,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AppModule {
     @Provides
     @Singleton
-    Gson providesGson(){
+    Gson providesGson() {
         return new Gson();
     }
+
     @Provides
     @Singleton
-    Retrofit providesRetrofit(Gson gson){
+    Retrofit providesRetrofit(Gson gson) {
         return new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    NBAService providesNBAService(Retrofit retrofit){
+        return retrofit.create(NBAService.class);
     }
 
 }

@@ -13,9 +13,10 @@ import dagger.Component;
 @Component(modules = {AppModule.class})
 public interface AppComponent {
     @Component.Builder
-    interface Builder{
+    interface Builder {
         @BindsInstance
         Builder application(App app);
+
         AppComponent build();
 
     }
