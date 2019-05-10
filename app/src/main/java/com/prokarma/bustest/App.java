@@ -13,8 +13,6 @@ public class App extends Application {
         super.onCreate();
         mAppComponent = DaggerAppComponent.builder().application(this).build();
 
-
-
     }
 
     public AppComponent getmAppComponent() {
