@@ -1,69 +1,59 @@
 package com.prokarma.bustest.view;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.prokarma.bustest.App;
 import com.prokarma.bustest.R;
-import com.prokarma.bustest.bus.PlayerResponseBus;
-import com.prokarma.bustest.model.DataItem;
-import com.prokarma.bustest.viewmodel.MainActivityViewModel;
-
-import java.util.List;
+import com.prokarma.bustest.bus.RxBus;
+import com.prokarma.bustest.events.Events;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
     @Inject
-    ViewModelProvider.Factory viewModelFactory;
-    @Inject
-    PlayerResponseBus playerResponseBus;
+    RxBus rxBus;
 
-    MainActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ((App) getApplication()).getmAppComponent().inject(this);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel.class);
-        playerResponseBus.getPlayers().subscribe(new Observer<List<DataItem>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(TAG, "onSubscribe: ");
-            }
+        initViews();
+    }
 
-            @Override
-            public void onNext(List<DataItem> dataItems) {
-                Log.d(TAG, "onNext: ");
-                Log.d(TAG, "onNext: " + dataItems.toString());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(TAG, "onError: ");
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(TAG, "onComplete: ");
-            }
-        });
+    private void initViews() {
+        findViewById(R.id.btn_intent).setOnClickListener(this);
+        findViewById(R.id.btn_configuration).setOnClickListener(this);
+        findViewById(R.id.btn_report).setOnClickListener(this);
+        findViewById(R.id.btn_analytics).setOnClickListener(this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.fetchData();
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_intent:
+                rxBus.send(Events.INTENT);
+
+                break;
+            case R.id.btn_configuration:
+                rxBus.send(Events.CONFIGURATION);
+
+                break;
+            case R.id.btn_report:
+                rxBus.send(Events.REPORT);
+
+                break;
+            case R.id.btn_analytics:
+                rxBus.send(Events.ANALYTICS);
+
+                break;
+        }
     }
 }
